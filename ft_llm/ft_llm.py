@@ -29,25 +29,28 @@ def _read_json(path: Path):
         return json.load(f)
 
 
-def main():
+def main(index=0):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--data_dir", default="./data/fixed_wiki2")
+    # ap.add_argument("--data_dir", default="./shadow")
+    # ap.add_argument("--train_file", default="shadow_{}.json".format(index))
+    
+    ap.add_argument("--data_dir", default="./data/train")
     ap.add_argument("--train_file", default="train_finetune.json")
 
     ap.add_argument("--model_name", "-m", default="gpt2")
     ap.add_argument("--block_size", type=int, default=256)
-    ap.add_argument("--epochs", type=int, default=1)
-    ap.add_argument("--batch_size", type=int, default=4)
+    ap.add_argument("--epochs", type=int, default=3)
+    ap.add_argument("--batch_size", type=int, default=8)
     ap.add_argument("--gradient_accumulation_steps", type=int, default=1)
     ap.add_argument("--lr", type=float, default=2e-4)
     ap.add_argument("--weight_decay", type=float, default=0.01)
-    ap.add_argument("--outdir", default="./models/gpt2_wiki2_target")
+    ap.add_argument("--outdir", default="./models/shadow_models/shadow_10")
     ap.add_argument("--seed", type=int, default=42)
 
     # ---- LoRA config ----
-    ap.add_argument("--lora", action="store_true", help="use LoRA")
-    ap.add_argument("--lora_r", type=int, default=8)
-    ap.add_argument("--lora_alpha", type=float, default=16)
+    ap.add_argument("--lora", action="store_true", help="use LoRA", default=True)
+    ap.add_argument("--lora_r", type=int, default=32)
+    ap.add_argument("--lora_alpha", type=float, default=64)
     ap.add_argument("--lora_dropout", type=float, default=0.05)
     ap.add_argument("--target_modules", type=str, default="", help="comma-separated modules, e.g., c_attn,c_fc,c_proj")
 
@@ -98,6 +101,7 @@ def main():
     model.resize_token_embeddings(len(tok))  # align vocab size
 
     # ========= optional LoRA =========
+    print("use lora:{}".format(args.lora))
     if args.lora:
         # target modules
         if args.target_modules.strip():
@@ -172,4 +176,6 @@ def main():
 
 
 if __name__ == "__main__":
+    # for i in range(8, 10):
+    #     main(i)
     main()

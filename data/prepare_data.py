@@ -8,7 +8,7 @@ from datasets import load_dataset, Dataset
 from transformers import AutoTokenizer
 
 OUTDIR = "wiki_json"
-SEED = 42
+# SEED = 42
 TRAIN_PER_SRC = 10_000
 MIN_TOKENS = 25
 
@@ -53,27 +53,28 @@ def dump_json(path: Path, obj):
         json.dump(obj, f, ensure_ascii=False, indent=2)
 
 def main():
-    set_seed_all(SEED)
-    os.makedirs(OUTDIR, exist_ok=True)
+    for SEED in range(10):
+        set_seed_all(SEED)
+        os.makedirs(OUTDIR, exist_ok=True)
 
-    tok = AutoTokenizer.from_pretrained("gpt2", use_fast=True)
-    if tok.pad_token is None:
-        tok.pad_token = tok.eos_token
+        tok = AutoTokenizer.from_pretrained("gpt2", use_fast=True)
+        if tok.pad_token is None:
+            tok.pad_token = tok.eos_token
 
-    # ---------- Load & filter (WikiText-103-raw-v1) ----------
-    wiki_raw = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1")["train"]
-    wiki = ensure_text_column(wiki_raw, "wikitext103")
-    wiki = basic_clean(wiki)
-    wiki = filter_by_tokens(wiki, tok, MIN_TOKENS)
+        # ---------- Load & filter (WikiText-103-raw-v1) ----------
+        wiki_raw = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1")["train"]
+        wiki = ensure_text_column(wiki_raw, "wikitext103")
+        wiki = basic_clean(wiki)
+        wiki = filter_by_tokens(wiki, tok, MIN_TOKENS)
 
-    # train set
-    wiki_train, wiki_train_idx = sample_n(wiki, TRAIN_PER_SRC, SEED + 1)
+        # train set
+        wiki_train, wiki_train_idx = sample_n(wiki, TRAIN_PER_SRC, SEED + 1)
 
-    out_dir = Path(OUTDIR)
-    train_json = [{"text": ex["text"]} for ex in wiki_train]
-    dump_json(out_dir / "train_finetune.json", train_json)
+        out_dir = Path(OUTDIR)
+        train_json = [{"text": ex["text"]} for ex in wiki_train]
+        dump_json(out_dir / "train_finetune_{}.json".format(SEED), train_json)
 
-    print("[OK] JSON saved to", OUTDIR)
+        print("[OK] JSON saved to", OUTDIR)
 
 if __name__ == "__main__":
     main()
