@@ -31,11 +31,11 @@ def _read_json(path: Path):
 
 def main(index=0):
     ap = argparse.ArgumentParser()
-    # ap.add_argument("--data_dir", default="./shadow")
-    # ap.add_argument("--train_file", default="shadow_{}.json".format(index))
+    ap.add_argument("--data_dir", default="./shadow")
+    ap.add_argument("--train_file", default="shadow_{}.json".format(index))
     
-    ap.add_argument("--data_dir", default="./data/train")
-    ap.add_argument("--train_file", default="train_finetune.json")
+    # ap.add_argument("--data_dir", default="./data/train")
+    # ap.add_argument("--train_file", default="train_finetune.json")
 
     ap.add_argument("--model_name", "-m", default="gpt2")
     ap.add_argument("--block_size", type=int, default=512)
@@ -44,7 +44,7 @@ def main(index=0):
     ap.add_argument("--gradient_accumulation_steps", type=int, default=1)
     ap.add_argument("--lr", type=float, default=2e-4)
     ap.add_argument("--weight_decay", type=float, default=0.01)
-    ap.add_argument("--outdir", default="./models/shadow_models/shadow_10")
+    ap.add_argument("--outdir", default="./models/shadow_models/shadow_{}".format(index))
     ap.add_argument("--seed", type=int, default=42)
 
     # ---- LoRA config ----
@@ -175,6 +175,5 @@ def main(index=0):
 
 
 if __name__ == "__main__":
-    # for i in range(8, 10):
-    #     main(i)
-    main()
+    for i in range(8,10):
+        main(i)
