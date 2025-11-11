@@ -9,7 +9,7 @@ from transformers import AutoTokenizer
 
 OUTDIR = "wiki_json"
 # SEED = 42
-TRAIN_PER_SRC = 10_000
+TRAIN_PER_SRC = 7_000
 MIN_TOKENS = 25
 
 def set_seed_all(seed: int):

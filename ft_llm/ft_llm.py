@@ -38,7 +38,7 @@ def main(index=0):
     ap.add_argument("--train_file", default="train_finetune.json")
 
     ap.add_argument("--model_name", "-m", default="gpt2")
-    ap.add_argument("--block_size", type=int, default=256)
+    ap.add_argument("--block_size", type=int, default=512)
     ap.add_argument("--epochs", type=int, default=3)
     ap.add_argument("--batch_size", type=int, default=8)
     ap.add_argument("--gradient_accumulation_steps", type=int, default=1)
@@ -101,7 +101,6 @@ def main(index=0):
     model.resize_token_embeddings(len(tok))  # align vocab size
 
     # ========= optional LoRA =========
-    print("use lora:{}".format(args.lora))
     if args.lora:
         # target modules
         if args.target_modules.strip():
