@@ -11,6 +11,7 @@ OUTDIR = "wiki_json"
 # SEED = 42
 TRAIN_PER_SRC = 7_000
 MIN_TOKENS = 25
+SHADOW_NUM = 10
 
 def set_seed_all(seed: int):
     import numpy as np
@@ -53,7 +54,7 @@ def dump_json(path: Path, obj):
         json.dump(obj, f, ensure_ascii=False, indent=2)
 
 def main():
-    for SEED in range(10):
+    for SEED in range(SHADOW_NUM):
         set_seed_all(SEED)
         os.makedirs(OUTDIR, exist_ok=True)
 
